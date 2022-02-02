@@ -1,0 +1,5 @@
+name: SeedProtect
+version: '${project.version}'
+main: com.stan.plugin.seedprotect.SeedProtect
+api-version: 1.18
+
