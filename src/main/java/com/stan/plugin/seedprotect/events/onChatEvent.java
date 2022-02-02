@@ -11,6 +11,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class onChatEvent implements Listener {
 
+
     private final SeedProtect plugin;
     public onChatEvent(SeedProtect plugin) {
 
@@ -31,22 +32,36 @@ public class onChatEvent implements Listener {
                 @Override
                 public void run() {
 
-                    if (plugin.getCustomConfig().getBoolean("banplayer")) {
+                    if (plugin.configBoolean("ban-player")) {
 
-                        Bukkit.dispatchCommand(console, "ban " + player.getName() + " " + plugin.getCustomConfig().getString("ban-time"));
+                        if (plugin.configString("ban-time").equalsIgnoreCase("null")) {
+                            Bukkit.dispatchCommand(console, "ban " + player.getName());
+                        } else {
+
+                            Bukkit.dispatchCommand(console, "tempban " + player.getName() + " " + plugin.configString("ban-time"));
+                        }
+
                     }
 
                     if (plugin.getCustomConfig().getBoolean("banipplayer")) {
 
-                        Bukkit.dispatchCommand(console, "banip " + player.getName() + " " + plugin.getCustomConfig().getString("ban-time"));
+                        if (plugin.configString("ban-time").equalsIgnoreCase("null")) {
+                            Bukkit.dispatchCommand(console, "banip " + player.getName());
+                        } else {
+
+                            Bukkit.dispatchCommand(console, "tempbanip " + player.getName() + " " + plugin.configString("ban-time"));
+                        }
                     }
 
                     if (plugin.getCustomConfig().getBoolean("muteplayer")) {
 
-                        Bukkit.dispatchCommand(console, "ban " + player.getName() + " " + plugin.getCustomConfig().getString("mute-time"));
-                    }
+                        if (plugin.configString("mute-time").equalsIgnoreCase("null")) {
+                            Bukkit.dispatchCommand(console, "ban " + player.getName());
 
-                    //Bukkit.dispatchCommand(console, "ban " + player.getName());
+                        } else {
+                            Bukkit.dispatchCommand(console, "ban " + player.getName() + " " + plugin.configString("mute-time"));
+                        }
+                    }
                 }
             });
 
@@ -58,9 +73,7 @@ public class onChatEvent implements Listener {
 
                 }
             }
-
             event.setCancelled(true);
-
         }
     }
 }

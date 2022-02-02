@@ -1,9 +1,10 @@
 # What should the plugin do when a player enters the seed in chat?
-banplayer: true
-banipplayer: true
-muteplayer: true
+ban-player: true
+banip-player: true
+mute-player: true
 
 # For how long should the player be banned / muted if one of the options above is set to true
-ban-time: "7d"
-mute-time: "7h"
+# Set to "null" if you want the ban / mute time to be infinite
+ban-time: "null" # For example 1d
+mute-time: "null" # For example 1h
 
