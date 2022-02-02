@@ -1,54 +1,53 @@
 package com.stan.plugin.seedprotect;
 
+import com.stan.plugin.seedprotect.events.onChatEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
+
 public final class SeedProtect extends JavaPlugin implements Listener {
+
+    private File customConfigFile;
+    private FileConfiguration customConfig;
 
     @Override
     public void onEnable() {
+        createCustomConfig();
+
         getLogger().info("SeedProtect plugin by dev-stan has been enabeld!");
-        getServer().getPluginManager().registerEvents(this, this);
+
+        getServer().getPluginManager().registerEvents(new onChatEvent(this), this);
 
 
     }
 
-    @EventHandler
-    public void onChat(AsyncPlayerChatEvent event) {
+    public FileConfiguration getCustomConfig() {
+        return this.customConfig;
+    }
 
-        System.out.println("Shit's working g!");
+    private void createCustomConfig() {
+        customConfigFile = new File(getDataFolder(), "config.yml");
+        if (!customConfigFile.exists()) {
+            customConfigFile.getParentFile().mkdirs();
+            saveResource("config.yml", false);
+        }
 
-        Player player = event.getPlayer();
-        ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-        String message = event.getMessage();
-        Long seed = Bukkit.getWorld("world").getSeed();
-
-        if (message.contains(seed.toString())) {
-
-            Bukkit.getScheduler().runTask(this, new Runnable() {
-                @Override
-                public void run() {
-                    Bukkit.dispatchCommand(console, "ban " + player.getName());
-                }
-            });
-
-            for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-
-                if (p.isOp()) {
-
-                    p.sendMessage(ChatColor.RED + "Player: " + player.getName() + " tried sending the seed in chat and has been banned!");
-
-                }
-            }
-
-            event.setCancelled(true);
-
+        customConfig= new YamlConfiguration();
+        try {
+            customConfig.load(customConfigFile);
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
         }
     }
 }
